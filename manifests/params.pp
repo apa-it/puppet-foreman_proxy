@@ -54,7 +54,7 @@ class foreman_proxy::params {
   $puppetca_cmd      = $puppet::params::puppetca_cmd
   $puppet_group      = 'puppet'
   $ssldir            = $puppet::params::puppet_ssldir
-  $puppetdir         = $puppet::params::puppet_vardir
+  $puppetdir         = $puppet::params::confdir
 
   # puppetrun settings
   $puppetrun          = true
