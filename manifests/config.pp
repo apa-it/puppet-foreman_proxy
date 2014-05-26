@@ -1,5 +1,8 @@
 # Configure the foreman proxy
-class foreman_proxy::config {
+class foreman_proxy::config(
+  $puppetrun_cmd = $foreman_proxy::params::puppetrun_cmd, 
+  $puppetca_cmd  = $foreman_proxy::params::puppetca_cmd) 
+  inherits foreman_proxy::params {
 
   # Ensure SSL certs from the puppetmaster are available
   # Relationship is duplicated there as defined() is parse-order dependent
@@ -52,7 +55,7 @@ class foreman_proxy::config {
       owner   => 'root',
       group   => 'root',
       mode    => '0440',
-      content => "${foreman_proxy::user} ALL = NOPASSWD : ${foreman_proxy::puppetca_cmd} *, ${foreman_proxy::puppetrun_cmd} *
+      content => "${foreman_proxy::user} ALL = NOPASSWD : ${puppetca_cmd} *, ${puppetrun_cmd} *
 Defaults:${foreman_proxy::user} !requiretty\n",
       require => File['/etc/sudoers.d'],
     }
@@ -62,8 +65,8 @@ Defaults:${foreman_proxy::user} !requiretty\n",
       changes => [
         "set spec[user = '${foreman_proxy::user}']/user ${foreman_proxy::user}",
         "set spec[user = '${foreman_proxy::user}']/host_group/host ALL",
-        "set spec[user = '${foreman_proxy::user}']/host_group/command[1] '${foreman_proxy::puppetca_cmd} *'",
-        "set spec[user = '${foreman_proxy::user}']/host_group/command[2] '${foreman_proxy::puppetrun_cmd} *'",
+        "set spec[user = '${foreman_proxy::user}']/host_group/command[1] '${puppetca_cmd} *'",
+        "set spec[user = '${foreman_proxy::user}']/host_group/command[2] '${puppetrun_cmd} *'",
         "set spec[user = '${foreman_proxy::user}']/host_group/command[1]/tag NOPASSWD",
         "set Defaults[type = ':${foreman_proxy::user}']/type :${foreman_proxy::user}",
         "set Defaults[type = ':${foreman_proxy::user}']/requiretty/negate ''",

@@ -48,17 +48,28 @@ class foreman_proxy::params {
     }
   }
 
+  # Only use 'puppet cert' on versions where puppetca no longer exists
+  if versioncmp($::puppetversion, '3.0') < 0 {
+    $puppetca_path = '/usr/sbin'
+    $puppetca_bin  = 'puppetca'
+    $puppetrun_cmd = '/usr/sbin/puppetrun'
+  } else {
+    $puppetca_path = '/usr/bin'
+    $puppetca_bin = 'puppet cert'
+    $puppetrun_cmd = '/usr/bin/puppet kick'
+  }
+
+  $puppetca_cmd = "${puppetca_path}/${puppetca_bin}"
+
   # puppetca settings
   $puppetca          = true
   $autosign_location = '/etc/puppet/autosign.conf'
-  $puppetca_cmd      = $puppet::params::puppetca_cmd
   $puppet_group      = 'puppet'
   $ssldir            = $puppet::params::puppet_ssldir
   $puppetdir         = $puppet::params::confdir
 
   # puppetrun settings
   $puppetrun          = true
-  $puppetrun_cmd      = $puppet::params::puppetrun_cmd
   $puppetrun_provider = ''
   $customrun_cmd      = '/bin/false'
   $customrun_args     = '-ay -f -s'
